@@ -11,7 +11,13 @@ public class FruitController : MonoBehaviour
     private void Start()
     {
         _destroyPoint = GameObject.FindWithTag("DestroyPoint").transform;
-        DoMove();
+        //DoMove();
+    }
+
+    private void Update()
+    {
+        transform.position =
+            Vector3.MoveTowards(transform.position, _destroyPoint.transform.position, 3 * Time.deltaTime);
     }
 
     private void OnTriggerEnter(Collider other)
