@@ -12,6 +12,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: banana Variant
       objectReference: {fileID: 0}
+    - target: {fileID: 100000, guid: 3a9857ff38f5efa41ae3ff3ff643f2bd, type: 3}
+      propertyPath: m_TagString
+      value: Fruit
+      objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: 3a9857ff38f5efa41ae3ff3ff643f2bd, type: 3}
       propertyPath: m_RootOrder
       value: 1
