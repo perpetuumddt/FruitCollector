@@ -8,6 +8,9 @@ TagManager:
   - DestroyPoint
   - FruitsContainer
   - Fruit
+  - Tracker
+  - FruitPicker
+  - EventHandler
   layers:
   - Default
   - TransparentFX
