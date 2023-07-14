@@ -35,12 +35,12 @@ public class EventHandler : MonoBehaviour
         OnQuestCompleted?.Invoke();
     }
 
-    public virtual void OnOnGameStarted()
+    public virtual void InvokeOnGameStarted()
     {
         OnGameStarted?.Invoke();
     }
 
-    public virtual void OnOnGameFinished()
+    public virtual void InvokeOnGameFinished()
     {
         OnGameFinished?.Invoke();
     }
