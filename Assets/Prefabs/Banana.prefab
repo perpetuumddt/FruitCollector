@@ -10,7 +10,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 100000, guid: 3a9857ff38f5efa41ae3ff3ff643f2bd, type: 3}
       propertyPath: m_Name
-      value: banana Variant
+      value: Banana
       objectReference: {fileID: 0}
     - target: {fileID: 100000, guid: 3a9857ff38f5efa41ae3ff3ff643f2bd, type: 3}
       propertyPath: m_TagString
@@ -128,6 +128,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0d45af8c58ff270409a820dc8bdffa29, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  puffEffect: {fileID: 1748686026955624764, guid: 6f3ca0724cfb5374abc5561eb9d1362f,
+    type: 3}
+  selectedEffect: {fileID: 2127423515073169481, guid: 503cd6c377fa9d641b59ba74cd26e3ef,
+    type: 3}
+  collectedEffect: {fileID: 5895482148235614344, guid: fc7f6fab3b6693346959ceb50817e9a3,
+    type: 3}
 --- !u!54 &-7892432045846941410
 Rigidbody:
   m_ObjectHideFlags: 0

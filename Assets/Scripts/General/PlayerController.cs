@@ -1,55 +1,83 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
+using Unity.Mathematics;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public class PlayerController : MonoBehaviour
 {
-    private GameObject _tracker;
-    private EventHandler _eventHandler;
+    [SerializeField]
+    private EventHandler eventHandler;
     
-    [SerializeField] private Animator _animator;
+    [SerializeField] private Animator animator;
     private static readonly int IsDancing = Animator.StringToHash("isDancing");
     private static readonly int IsIdle = Animator.StringToHash("isIdle");
-    private static readonly int IsPickingUp = Animator.StringToHash("IsPickingUp");
+    private static readonly int IsPickingUp = Animator.StringToHash("isPickingUp");
 
     private string _questFruitName;
-    
-    private void Awake()
-    {
-        _tracker = GameObject.FindWithTag("Tracker");
-        _eventHandler = GameObject.FindWithTag("EventHandler").GetComponent<EventHandler>();
-    }
+
+    [SerializeField] private TrackerController trackerController;
+
+    [SerializeField] private GameObject puffEffect;
+    [SerializeField] private GameObject collectedEffect;
 
     private void OnEnable()
     {
-        _eventHandler.OnFruitPickedUp += FruitPickedUp;
+        eventHandler.OnGameStarted += GoIdle;
+        eventHandler.OnFruitPickedUp += FruitPickedUp;
+        eventHandler.OnGameFinished += GameFinished;
     }
 
     private void OnDisable()
     {
-        _eventHandler.OnFruitPickedUp -= FruitPickedUp;
+        eventHandler.OnGameStarted -= GoIdle;
+        eventHandler.OnFruitPickedUp -= FruitPickedUp;
+        eventHandler.OnQuestCompleted -= GameFinished;
     }
 
-    private void Start()
+    private void GoIdle()
     {
-        _animator.SetTrigger(IsPickingUp);
+        animator.SetTrigger(IsIdle);
     }
 
-    private void FruitSelected()
+    private void GameFinished()
     {
+        StartCoroutine(GoDanceRoutine());
     }
 
     private void FruitPickedUp(GameObject obj)
     {
+        StartCoroutine(PickUpRoutine());
         if (obj.gameObject.name == _questFruitName+"(Clone)")
         {
-            _eventHandler.InvokeOnFruitCollected();
+            Instantiate(collectedEffect, obj.transform.position, quaternion.identity);
+            eventHandler.InvokeOnFruitCollected(obj);
+        }
+        else
+        {
+            Instantiate(puffEffect, obj.transform.position, quaternion.identity);
+            trackerController.TrackOnFruitCollected(obj);
+            Destroy(obj);
         }
     }
 
-    public void SetQuestFruitName(string name)
+    private IEnumerator PickUpRoutine()
     {
-        this._questFruitName = name;
+        animator.SetTrigger(IsPickingUp);
+        yield return new WaitForSeconds(1f);
+        animator.SetTrigger(IsIdle);
+    }
+
+    private IEnumerator GoDanceRoutine()
+    {
+        yield return new WaitForSeconds(1f);
+        animator.SetTrigger(IsDancing);
+    }
+
+    public void SetQuestFruitName(string fruitName)
+    {
+        _questFruitName = fruitName;
     }
 }

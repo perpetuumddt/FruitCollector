@@ -1,27 +1,21 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 public class StartScreen : ScreenUIController
 {
-    [SerializeField] private Button _startButton;
-
-    private EventHandler _eventHandler;
-
-    private void Awake()
-    {
-        _eventHandler = GameObject.FindWithTag("EventHandler").GetComponent<EventHandler>();
-    }
+    [SerializeField] private Button startButton;
 
     private void OnEnable()
     {
-        _startButton.onClick.AddListener(StartNewGame);
+        startButton.onClick.AddListener(StartNewGame);
     }
 
     private void StartNewGame()
     {
-        _eventHandler.InvokeOnGameStarted();
+        eventHandler.InvokeOnGameStarted();
     }
     public override void ActivateScreen()
     {

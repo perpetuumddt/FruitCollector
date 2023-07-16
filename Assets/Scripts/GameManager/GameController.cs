@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Mathematics;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -9,18 +10,11 @@ using UnityEngine.Serialization;
 public class GameController : MonoBehaviour
 {
     [SerializeField] private QuestController questController;
-    private EventHandler _eventHandler;
-
-    [SerializeField] private StartScreen _startScreen;
-    [SerializeField] private GameplayScreen _gameplayScreen;
-    [SerializeField] private EndgameScreen _endgameScreen;
-
-    [SerializeField] private Transform _conveyorTransform;
-    
-    private void Awake()
-    {
-        _eventHandler = GameObject.FindWithTag("EventHandler").GetComponent<EventHandler>();
-    }
+    [SerializeField] private EventHandler eventHandler;
+    [SerializeField] private StartScreen startScreen;
+    [SerializeField] private GameplayScreen gameplayScreen;
+    [SerializeField] private EndgameScreen endgameScreen;
+    [SerializeField] private Transform conveyorTransform;
 
     private void Start()
     {
@@ -29,49 +23,50 @@ public class GameController : MonoBehaviour
 
     private void OnEnable()
     {
-        _eventHandler.OnQuestCompleted += FinishGame;
-        _eventHandler.OnGameStarted += StartGame;
+        eventHandler.OnQuestCompleted += FinishGame;
+        eventHandler.OnGameStarted += StartGame;
+        eventHandler.OnFruitCollected += gameplayScreen.FloatingText;
     }
 
     private void OnDisable()
     {
-        _eventHandler.OnQuestCompleted -= FinishGame;
-        _eventHandler.OnGameStarted -= StartGame;
+        eventHandler.OnQuestCompleted -= FinishGame;
+        eventHandler.OnGameStarted -= StartGame;
+        eventHandler.OnFruitCollected -= gameplayScreen.FloatingText;
     }
 
     private void SetupGame()
     {
-        _startScreen.ActivateScreen();
+        startScreen.ActivateScreen();
     }
 
     private void StartGame()
     {
-        StartCoroutine(SetupConveyor());
+        SetupConveyor();
         questController.GenerateQuest();
-        _startScreen.DeactivateScreen();
-        _gameplayScreen.ActivateScreen();
-    }
-
-    private IEnumerator SetupConveyor()
-    {
-        var isMoving = true;
-        Vector3 conveyorPos = new Vector3(-0.76f,1.075f,4.34f);
-        while (isMoving)
-        {
-            _conveyorTransform.transform.position = Vector3.MoveTowards(_conveyorTransform.position,conveyorPos,0.1f * Time.deltaTime);
-            if (_conveyorTransform.transform.position == conveyorPos)
-            {
-                isMoving = false;
-            }
-        }
-
-        yield return null;
+        startScreen.DeactivateScreen();
+        endgameScreen.DeactivateScreen();
+        gameplayScreen.ActivateScreen();
+        
     }
     
     private void FinishGame()
     {
-        _eventHandler.InvokeOnGameFinished();
-        _gameplayScreen.DeactivateScreen();
-        _endgameScreen.ActivateScreen();
+        RemoveConveyor();
+        eventHandler.InvokeOnGameFinished();
+        gameplayScreen.DeactivateScreen();
+        endgameScreen.ActivateScreen();
+    }
+
+    private void SetupConveyor()
+    {
+        Vector3 conveyorPos = new Vector3(-0.76f,1.075f,4.34f);
+        conveyorTransform.transform.position = conveyorPos;
+    }
+
+    private void RemoveConveyor()
+    {
+        Vector3 conveyorPos = new Vector3(-0.76f, -1f, 4.34f);
+        conveyorTransform.transform.position = conveyorPos;
     }
 }

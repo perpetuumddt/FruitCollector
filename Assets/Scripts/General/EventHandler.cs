@@ -5,9 +5,9 @@ using UnityEngine;
 
 public class EventHandler : MonoBehaviour
 {
-    public event Action<bool> OnFruitSelected;
+    public event Action OnFruitSelected;
     public event Action<GameObject> OnFruitPickedUp;
-    public event Action OnFruitCollected;
+    public event Action<GameObject> OnFruitCollected;
 
     public event Action OnQuestCompleted; 
 
@@ -15,9 +15,9 @@ public class EventHandler : MonoBehaviour
     public event Action OnGameFinished;
 
 
-    public virtual void InvokeOnFruitSelected(bool value)
+    public virtual void InvokeOnFruitSelected()
     {
-        OnFruitSelected?.Invoke(value);
+        OnFruitSelected?.Invoke();
     }
 
     public virtual void InvokeOnFruitPickedUp(GameObject obj)
@@ -25,9 +25,9 @@ public class EventHandler : MonoBehaviour
         OnFruitPickedUp?.Invoke(obj);
     }
 
-    public virtual void InvokeOnFruitCollected()
+    public virtual void InvokeOnFruitCollected(GameObject obj)
     {
-        OnFruitCollected?.Invoke();
+        OnFruitCollected?.Invoke(obj);
     }
 
     public virtual void InvokeOnQuestCompleted()

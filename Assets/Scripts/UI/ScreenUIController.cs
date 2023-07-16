@@ -6,7 +6,7 @@ using UnityEngine.Serialization;
 public class ScreenUIController : MonoBehaviour
 {
     [SerializeField] private CanvasGroup canvasGroup;
-
+    [SerializeField] protected EventHandler eventHandler;
     protected void SetActive(bool isActive)
     {
         canvasGroup.alpha = isActive ? 1 : 0;

@@ -1,8 +1,10 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Mathematics;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public class FruitController : MonoBehaviour
 {
@@ -10,9 +12,16 @@ public class FruitController : MonoBehaviour
     private TrackerController _tracker;
     private EventHandler _eventHandler;
 
-    private bool isTracking = false;
-    private bool isCollectable = false;
-    private bool isMoving = true;
+    private bool _isTracking;
+    private bool _isCollectable;
+    private bool _isMoving;
+    
+    [SerializeField] private GameObject selectedEffect;
+
+    private void OnEnable()
+    {
+        _isMoving = true;
+    }
 
     private void Awake()
     {
@@ -21,21 +30,16 @@ public class FruitController : MonoBehaviour
         _eventHandler = GameObject.FindWithTag("EventHandler").GetComponent<EventHandler>();
     }
 
-    private void Start()
-    {
-        
-    }
-
     private void Update()
     {
-        if (isMoving)
+        if (_isMoving)
         {
             transform.position =
                 Vector3.MoveTowards(transform.position, _destroyPoint.transform.position, 3 * Time.deltaTime);
         }
-        if (isTracking)
+        if (_isTracking)
         {
-            _tracker.Tracking(transform.position.x);
+            _tracker.Tracking(transform.position);
         }
     }
 
@@ -43,10 +47,10 @@ public class FruitController : MonoBehaviour
     {
         if (other.gameObject.CompareTag("DestroyPoint"))
         {
-            Destroy(this.gameObject);
+            Destroy(gameObject);
         }
 
-        if (isCollectable && other.gameObject.CompareTag("FruitPicker"))
+        if (_isCollectable && other.gameObject.CompareTag("FruitPicker"))
         {
             OnCollected();
         }
@@ -54,18 +58,22 @@ public class FruitController : MonoBehaviour
 
     private void OnCollected()
     {
-        isMoving = false;
-        isTracking = false;
-        isCollectable = false;
-        _eventHandler.InvokeOnFruitPickedUp(this.gameObject);
+        _isMoving = false;
+        _isTracking = false;
+        _isCollectable = false;
+        _eventHandler.InvokeOnFruitPickedUp(gameObject);
     }
 
     public void OnClicked()
     {
-        isTracking = true;
-        isCollectable = true;
-        _eventHandler.InvokeOnFruitSelected(true);
+        _isTracking = true;
+        _isCollectable = true;
+        EffectOnSelected();
+        _eventHandler.InvokeOnFruitSelected();
     }
-    
-    
+
+    private void EffectOnSelected()
+    {
+        Instantiate(selectedEffect, transform.position, quaternion.identity);
+    }
 }

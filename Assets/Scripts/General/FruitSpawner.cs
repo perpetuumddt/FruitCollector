@@ -2,52 +2,57 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Serialization;
 using Random = UnityEngine.Random;
 
 public class FruitSpawner : MonoBehaviour
 {
     [SerializeField]
-    public GameObject[] _fruits;
+    public GameObject[] fruits;
     [SerializeField] 
     private float spawnRate;
-
+    
+    [SerializeField] 
+    private EventHandler eventHandler;
+    [SerializeField]
     private Transform spawnPoint;
+    [SerializeField]
     private Transform container;
-    private bool _isSpawning = true;
 
-    private void Start()
-    {
-        spawnPoint = GameObject.FindWithTag("SpawnPoint").transform;
-        container = GameObject.FindWithTag("FruitsContainer").transform;
-
-        StartCoroutine(StartSpawner());
-    }
-
-    /*
+    private bool _isSpawning;
+    
     private void OnEnable()
     {
-        throw new NotImplementedException();
+        eventHandler.OnGameStarted += StartSpawner;
+        eventHandler.OnGameFinished += StopSpawner;
     }
 
     private void OnDisable()
     {
-        throw new NotImplementedException();
-    }*/
+        eventHandler.OnGameStarted -= StartSpawner;
+        eventHandler.OnGameFinished -= StopSpawner;
+    }
 
-    private IEnumerator StartSpawner()
+    private void StartSpawner()
+    {
+        _isSpawning = true;
+        StartCoroutine(SpawnerRoutine());
+    }
+
+    private void StopSpawner()
+    {
+        _isSpawning = false;
+    }
+
+    private IEnumerator SpawnerRoutine()
     {
         while (_isSpawning)
         {
-            SpawnFruit(ChooseFruitToSpawn(_fruits.Length));
+            SpawnFruit(ChooseFruitToSpawn(fruits.Length));
             yield return new WaitForSeconds(spawnRate);
         }
     }
 
-    private void StopSpawning()
-    {
-        _isSpawning = false;
-    }
-    
     private int ChooseFruitToSpawn(int fruitsAmount)
     {
         var fruitToSpawn = Random.Range(0, fruitsAmount);
@@ -56,7 +61,6 @@ public class FruitSpawner : MonoBehaviour
 
     private void SpawnFruit(int fruitToSpawn)
     {
-        //Instantiate(_fruits[fruitToSpawn], spawnPoint.position, Quaternion.identity);
-        Instantiate(_fruits[fruitToSpawn], spawnPoint.position, Quaternion.identity, container);
+        Instantiate(fruits[fruitToSpawn], spawnPoint.position, Quaternion.identity, container); //TODO: Unity pool
     }
 }

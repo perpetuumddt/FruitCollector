@@ -3,34 +3,30 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Serialization;
 using Random = UnityEngine.Random;
 
 public class QuestController : MonoBehaviour
 {
     [SerializeField] private TextMeshProUGUI questInfoText;
     [SerializeField] private TextMeshProUGUI questProgressionText;
-
-    private PlayerController _playerController;
-    private EventHandler _eventHandler;
+    [SerializeField] private PlayerController playerController;
+    [SerializeField] private EventHandler eventHandler;
     
     private int _questCount;
     private int _collectedCount = 0;
     private string _name;
 
-    private void Awake()
-    {
-        _playerController = GameObject.FindWithTag("Player").GetComponent<PlayerController>();
-        _eventHandler = GameObject.FindWithTag("EventHandler").GetComponent<EventHandler>();
-    }
-
     private void OnEnable()
     {
-        _eventHandler.OnFruitCollected += IncreaseQuestProgression;
+        eventHandler.OnFruitCollected += IncreaseQuestProgression;
+        eventHandler.OnGameFinished += ClearQuest;
     }
 
     private void OnDisable()
     {
-        _eventHandler.OnFruitCollected -= IncreaseQuestProgression;
+        eventHandler.OnFruitCollected -= IncreaseQuestProgression;
+        eventHandler.OnGameFinished -= ClearQuest;
     }
 
     public void GenerateQuest()
@@ -49,7 +45,7 @@ public class QuestController : MonoBehaviour
                 _name = "Orange";
                 break;
         }
-        _playerController.SetQuestFruitName(_name);
+        playerController.SetQuestFruitName(_name);
         if (_questCount == 1)
         {
             questInfoText.text = _questCount + " " + _name;
@@ -63,13 +59,20 @@ public class QuestController : MonoBehaviour
         questProgressionText.text = _collectedCount+"/"+_questCount;
         if (_collectedCount == _questCount)
         {
-            _eventHandler.InvokeOnQuestCompleted();
+            eventHandler.InvokeOnQuestCompleted();
         }
     }
 
-    public void IncreaseQuestProgression()
+    public void IncreaseQuestProgression(GameObject obj)
     {
         _collectedCount++;
         UpdateQuestProgression();
+    }
+
+    private void ClearQuest()
+    {
+        _collectedCount = 0;
+        _questCount = 0;
+        _name = " ";
     }
 }

@@ -27,29 +27,14 @@ public class TouchManager : MonoBehaviour
 
     private void OnEnable()
     {
-        _touchPressedAction.performed += TouchPressed;
         _touchPositionAction.performed += TouchPosition;
     }
 
     private void OnDisable()
     {
-        _touchPressedAction.performed -= TouchPressed;
         _touchPositionAction.performed -= TouchPosition;
     }
-
-    public void TouchPressed(InputAction.CallbackContext context)
-    {
-        /*_ray = _mainCam.ScreenPointToRay(_touchPositionAction.ReadValue<Vector3>());
-        if (Physics.Raycast(_ray, out _hit))
-        {
-            if (_hit.collider.CompareTag("Fruit"))
-            {
-                _hit.transform.GetComponent<FruitController>().OnClicked();
-            }
-        }*/
-        Debug.Log("pressed");
-    }
-
+    
     public void TouchPosition(InputAction.CallbackContext context)
     {
         _ray = _mainCam.ScreenPointToRay(context.ReadValue<Vector2>());
